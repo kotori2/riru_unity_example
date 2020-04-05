@@ -3,6 +3,7 @@
 
 #include <list>
 #include <cstdint>
+#include <memory>
 #include "base/logging.h"
 #include "dbi/instruction_set.h"
 #include "dbi/hook_common.h"
