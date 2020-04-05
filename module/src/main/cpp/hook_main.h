@@ -8,7 +8,6 @@
 #include <android/log.h>
 #include <link.h>
 #include <vector>
-#include "soinfo.h"
 
 extern "C" {
 extern void *enhanced_dlopen(const char *filename, int flags);
