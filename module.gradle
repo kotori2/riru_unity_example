@@ -1,0 +1,26 @@
+ext {
+    moduleId = "some_module" // FIXME replace with yours
+    moduleVersion = "v1.0" // FIXME replace with yours
+    moduleVersionCode = 1  // FIXME replace with yours
+    moduleMinRiruApiVersion = 9
+    moduleMinRiruVersionName = "v22.0"
+    moduleMaxRiruApiVersion = 9
+
+    moduleProp = [
+            name       : "S0me module", // FIXME replace with yours
+            version    : moduleVersion,
+            versionCode: moduleVersionCode,
+            author     : "Kotori2", // FIXME replace with yours
+            description: "No description", // FIXME replace with yours
+            minApi     : moduleMinRiruApiVersion
+    ]
+
+    magiskModuleProp = [
+            id         : "riru-${moduleId.replace('_', '-')}",
+            name       : "Riru - ${moduleProp['name']}",
+            version    : moduleProp['version'],
+            versionCode: moduleProp['versionCode'],
+            author     : moduleProp['author'],
+            description: moduleProp['description']
+    ]
+}

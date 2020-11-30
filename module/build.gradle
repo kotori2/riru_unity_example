@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
-
-def moduleId = "unity_hax" // FIXME replace with yours
-def riruApiVersion = 4
+apply from: file(rootProject.file('module.gradle'))
 
 android {
     compileSdkVersion rootProject.ext.targetSdkVersion
@@ -10,7 +8,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         externalNativeBuild {
             cmake {
-                arguments "-DMODULE_NAME:STRING=riru_$moduleId"
+                arguments "-DMODULE_NAME:STRING=riru_$moduleId",
+                        "-DRIRU_MODULE_API_VERSION=$moduleMaxRiruApiVersion",
+                        "-DRIRU_MODULE_VERSION=$moduleVersionCode",
+                        "-DRIRU_MODULE_VERSION_NAME:STRING=\"$moduleVersion\""
+
             }
         }
     }
@@ -22,28 +24,23 @@ android {
     }
 }
 
-def moduleProp = [
-        name       : "Unity Hooker", // FIXME replace with yours
-        version    : "v2.0", // FIXME replace with yours
-        versionCode: "2", // FIXME replace with yours
-        author     : "Kotori2", // FIXME replace with yours
-        description: "No description", // FIXME replace with yours
-        api        : riruApiVersion
-]
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'https://dl.bintray.com/rikkaw/Libraries' }
+}
 
-def magiskModuleProp = [
-        id         : "riru-${moduleId.replace('_', '-')}",
-        name       : "Riru - ${moduleProp['name']}",
-        version    : moduleProp['version'],
-        versionCode: moduleProp['versionCode'],
-        author     : moduleProp['author'],
-        description: moduleProp['description']
-]
+dependencies {
+    implementation 'rikka.ndk:riru:9.1'
+}
 
 def outDir = file("$rootDir/out")
 def magiskDir = file("$outDir/magisk_module")
-def zipName = "magisk-${magiskModuleProp['id'].replace('_', '-')}-${magiskModuleProp['version']}.zip"
+def zipName = "${magiskModuleProp['id'].replace('_', '-')}-${magiskModuleProp['version']}.zip"
 def riruDir = "$magiskDir/riru"
+
+
+import org.apache.tools.ant.filters.FixCrLfFilter
 
 import java.nio.file.Files
 import java.security.MessageDigest
@@ -61,7 +58,7 @@ static def renameOrFail(File from, File to) {
         throw new IOException("Unable reanme file $from to $to")
     }
 }
-import org.apache.tools.ant.filters.FixCrLfFilter
+
 android.libraryVariants.all { variant ->
     def task = variant.assembleProvider.get()
     task.doLast {
@@ -81,7 +78,8 @@ android.libraryVariants.all { variant ->
             include 'riru.sh'
             filter { line ->
                 line.replaceAll('%%%RIRU_MODULE_ID%%%', moduleId)
-                .replaceAll('%%%RIRU_MIN_API_VERSION%%%', riruApiVersion.toString())
+                        .replaceAll('%%%RIRU_MIN_API_VERSION%%%', moduleMinRiruApiVersion.toString())
+                        .replaceAll('%%%RIRU_MIN_VERSION_NAME%%%', moduleMinRiruVersionName)
             }
             filter(FixCrLfFilter.class,
                     eol: FixCrLfFilter.CrLf.newInstance("lf"))
@@ -113,11 +111,6 @@ android.libraryVariants.all { variant ->
         renameOrFail(file("$nativeOutDir/armeabi-v7a"), file("$magiskDir/system/lib"))
         renameOrFail(file("$nativeOutDir/x86_64"), file("$magiskDir/system_x86/lib64"))
         renameOrFail(file("$nativeOutDir/x86"), file("$magiskDir/system_x86/lib"))
-
-        /*copy{
-            from "$rootDir/whale"
-            into "$magiskDir/system"
-        }*/
 
         // generate sha1sum
         fileTree("$magiskDir").matching {
