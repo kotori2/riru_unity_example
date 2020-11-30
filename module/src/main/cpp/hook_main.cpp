@@ -2,19 +2,18 @@
 // Created by kotori0 on 2020/2/5.
 //
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 #include <sys/mman.h>
 #include <dlfcn.h>
-#include <whale.h>
+#include <dobby.h>
 #include <string>
 #include <ios>
 #include <sstream>
 #include "hook_main.h"
-#include "enhanced_dlfcn.h"
 #include "il2cpp.h"
 #include <iomanip>
 #include <sys/system_properties.h>
@@ -23,7 +22,7 @@ int isGame(JNIEnv *env, jstring appDataDir) {
     if (!appDataDir)
         return 0;
 
-    const char *app_data_dir = env->GetStringUTFChars(appDataDir, NULL);
+    const char *app_data_dir = env->GetStringUTFChars(appDataDir, nullptr);
 
     int user = 0;
     static char package_name[256];
@@ -56,11 +55,11 @@ unsigned long get_module_base(const char* module_name)
 
     fp = fopen(filename, "r");
 
-    if (fp != NULL) {
+    if (fp != nullptr) {
         while (fgets(line, sizeof(line), fp)) {
             if (strstr(line, module_name) && strstr(line, "r-xp")) {
                 pch = strtok(line, "-");
-                addr = strtoul(pch, NULL, 16);
+                addr = strtoul(pch, nullptr, 16);
                 if (addr == 0x8000)
                     addr = 0;
                 break;
@@ -115,7 +114,7 @@ size_t hook(char* instance, cSharpByteArray *src){
     return r;
 }
 
-void hook_each(unsigned long rel_addr, void* hook, void** backup){
+void hook_each(unsigned long rel_addr, void* hook, void** backup_){
     LOGI("Installing hook at %lx", rel_addr);
     unsigned long addr = /*base_addr + */rel_addr;
 
@@ -126,20 +125,19 @@ void hook_each(unsigned long rel_addr, void* hook, void** backup){
         return ;
     }
 
-    WInlineHookFunction(
+    DobbyHook(
             reinterpret_cast<void*>(addr),
             hook,
-            backup);
+            backup_);
     mprotect(page_start, PAGE_SIZE, PROT_READ | PROT_EXEC);
 }
 
 void *hack_thread(void *arg)
 {
     LOGI("hack thread: %d", gettid());
-
-    void *dl = dlopen("libdl.so", RTLD_LAZY);
-    void* __loader_dlopen = dlsym(dl, "__loader_dlopen");
-    hook_each((unsigned long)__loader_dlopen, (void*)dlopen_, (void**)&dlopen_backup);
+    srand(time(nullptr));
+    void* loader_dlopen = DobbySymbolResolver(nullptr, "__dl__Z9do_dlopenPKciPK17android_dlextinfoPKv");
+    hook_each((unsigned long)loader_dlopen, (void*)dlopen_, (void**)&dlopen_backup);
 
     while (true)
     {
@@ -169,5 +167,5 @@ void *hack_thread(void *arg)
     hook_each((unsigned long)il2cpp_class_get_method_from_name(clazz, "Your Method", 1)->methodPointer, (void*)hook, (void**)&backup);
 
     LOGD("hack game finish");
-    return NULL;
+    return nullptr;
 }
