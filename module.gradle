@@ -1,26 +1,29 @@
 ext {
-    moduleId = "some_module" // FIXME replace with yours
-    moduleVersion = "v1.0" // FIXME replace with yours
-    moduleVersionCode = 1  // FIXME replace with yours
-    moduleMinRiruApiVersion = 9
-    moduleMinRiruVersionName = "v22.0"
-    moduleMaxRiruApiVersion = 9
+    /*
+      This name will be used in the name of the so file ("lib${moduleLibraryName}.so").
+   */
+    moduleLibraryName = "some_module"
 
-    moduleProp = [
-            name       : "S0me module", // FIXME replace with yours
-            version    : moduleVersion,
-            versionCode: moduleVersionCode,
-            author     : "Kotori2", // FIXME replace with yours
-            description: "No description", // FIXME replace with yours
-            minApi     : moduleMinRiruApiVersion
-    ]
+    /* Minimal supported Riru API version, used in the version check of riru.sh */
+    moduleMinRiruApiVersion = 24
 
-    magiskModuleProp = [
-            id         : "riru-${moduleId.replace('_', '-')}",
-            name       : "Riru - ${moduleProp['name']}",
-            version    : moduleProp['version'],
-            versionCode: moduleProp['versionCode'],
-            author     : moduleProp['author'],
-            description: moduleProp['description']
-    ]
+    /* The version name of minimal supported Riru, used in the version check of riru.sh */
+    moduleMinRiruVersionName = "v24.0.0"
+
+    /* Maximum supported Riru API version, used in the version check of riru.sh */
+    moduleRiruApiVersion = 26
+
+    /*
+       Magisk module ID
+       Since Magisk use it to distinguish different modules, you should never change it.
+       Note, the older version of the template uses '-' instead of '_', if your are upgrading from
+       the older version, please pay attention.
+    */
+    magiskModuleId = "riru_template"
+
+    moduleName = "S0me module"
+    moduleAuthor = "Kotori2"
+    moduleDescription = "No description. Requires Riru $moduleMinRiruVersionName or above."
+    moduleVersion = "v1.0"
+    moduleVersionCode = 1
 }
