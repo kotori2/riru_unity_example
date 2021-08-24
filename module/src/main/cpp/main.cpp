@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <cstring>
 #include <riru.h>
-#include <config.h>
+#include "include/config.h"
 #include "hook_main.h"
 
 
