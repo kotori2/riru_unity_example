@@ -1,11 +1,12 @@
-# Riru - Template
+# Zygisk - Unity Example
 
-[Riru](https://github.com/RikkaApps/Riru) module template.
+I'm a template showing how to hook Unity games with Zygisk installed.
+Since Riru is deprecated soon, we are not providing compatibility with Riru and the old version can be found in [master branch](https://github.com/kotori2/riru_unity_example/tree/master)
 
 ## Build
 
-1. Replace module info in `module/build.gradle` (all lines end with `// FIXME replace with yours`)
-2. Write you codes
+1. Replace module info in `module.gradle`
+2. Write you codes in `hook_main.cpp`
 3. Run gradle task `:module:assembleRelease` task from Android Studio or command line, zip will be saved in `out`.
 
 ## Notes
