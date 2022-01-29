@@ -1,8 +1,6 @@
 #pragma once
 
-namespace riru {
+namespace zygisk {
     extern const int moduleVersionCode;
     extern const char* const moduleVersionName;
-    extern const int moduleApiVersion;
-    extern const int moduleMinApiVersion;
 }

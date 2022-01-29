@@ -12,7 +12,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:7.1.0'
     }
 }
 
@@ -25,7 +25,11 @@ allprojects {
 
 ext {
     minSdkVersion = 23
-    targetSdkVersion = 30
+    targetSdkVersion = 32
+    compileSdkVersion = 32
+
+    buildToolsVersion = "32.0.0"
+    compileNdkVersion = "23.1.7779620"
 
     outDir = file("$rootDir/out")
 }
