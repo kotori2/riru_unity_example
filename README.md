@@ -6,7 +6,7 @@ Since Riru is deprecated soon, we are not providing compatibility with Riru and 
 ## Build
 
 1. Replace module info in `module.gradle`
-2. Write you codes in `hook_main.cpp`
+2. Write you codes in `hook_main.cpp` and `hook_main.h`
 3. Run gradle task `:module:assembleRelease` task from Android Studio or command line, zip will be saved in `out`.
 
 ## Notes

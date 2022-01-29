@@ -14,9 +14,24 @@
 #include <ios>
 #include <sstream>
 #include "hook_main.h"
-#include "il2cpp.h"
 #include <iomanip>
 #include <sys/system_properties.h>
+
+#include IL2CPPCLASS
+
+#define DO_API(r, n, p) r (*n) p
+
+#include IL2CPPAPI
+
+#undef DO_API
+
+void init_il2cpp_api() {
+#define DO_API(r, n, p) n = (r (*) p)dlsym(il2cpp_handle, #n)
+
+#include IL2CPPAPI
+
+#undef DO_API
+}
 
 int isGame(JNIEnv *env, jstring appDataDir) {
     if (!appDataDir)
@@ -70,19 +85,6 @@ unsigned long get_module_base(const char* module_name)
     return addr;
 }
 
-struct cSharpByteArray {
-    size_t idkwhatisthis[3];
-    size_t length;
-    char buf[4096];
-};
-
-struct cSharpString {
-    size_t address;
-    size_t nothing;
-    int length;
-    char buf[4096];
-};
-
 typedef void* (*dlopen_type)(const char* name,
                              int flags,
                              //const void* extinfo,
@@ -104,9 +106,9 @@ void* dlopen_(const char* name,
     return handle;
 }
 
-typedef size_t (*Hook)(char* instance, cSharpByteArray* src);
+typedef size_t (*Hook)(char* instance, Il2CppArray* src);
 Hook backup = nullptr;
-size_t hook(char* instance, cSharpByteArray *src){
+size_t hook(char* instance, Il2CppArray *src){
     if(backup == nullptr){
         LOGE("backup DOES NOT EXIST");
     }
@@ -147,15 +149,11 @@ void *hack_thread(void *arg)
         }
     }
     LOGD("detect libil2cpp.so %lx, start sleep", base_addr);
-    il2cpp_domain_get_ il2cpp_domain_get = (il2cpp_domain_get_)dlsym(il2cpp_handle, "il2cpp_domain_get");
-    il2cpp_domain_get_assemblies_ il2cpp_domain_get_assemblies = (il2cpp_domain_get_assemblies_)dlsym(il2cpp_handle, "il2cpp_domain_get_assemblies");
-    il2cpp_assembly_get_image_ il2cpp_assembly_get_image = (il2cpp_assembly_get_image_)dlsym(il2cpp_handle, "il2cpp_assembly_get_image");
-    il2cpp_class_from_name_ il2cpp_class_from_name = (il2cpp_class_from_name_)dlsym(il2cpp_handle, "il2cpp_class_from_name");
-    il2cpp_class_get_method_from_name_ il2cpp_class_get_method_from_name = (il2cpp_class_get_method_from_name_)dlsym(il2cpp_handle, "il2cpp_class_get_method_from_name");
     sleep(2);
     LOGD("hack game begin");
+    init_il2cpp_api();
     Il2CppDomain* domain = il2cpp_domain_get();
-    unsigned long ass_len = 0;
+    size_t ass_len = 0;
     const Il2CppAssembly** assembly_list = il2cpp_domain_get_assemblies(domain, &ass_len);
     while(strcmp((*assembly_list)->aname.name, "Assembly-CSharp") != 0){
         LOGD("Assembly name: %s", (*assembly_list)->aname.name);
