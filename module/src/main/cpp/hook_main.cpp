@@ -145,7 +145,8 @@ void *hack_thread(void *arg)
     sleep(2);
     LOGD("hack game begin");
     init_il2cpp_api();
-    Il2CppDomain* domain = il2cpp_domain_get();
+    auto* domain = il2cpp_domain_get();
+    il2cpp_thread_attach(domain);
     size_t ass_len = 0;
     const Il2CppAssembly** assembly_list = il2cpp_domain_get_assemblies(domain, &ass_len);
     while(strcmp((*assembly_list)->aname.name, "Assembly-CSharp") != 0){
