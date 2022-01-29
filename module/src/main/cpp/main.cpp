@@ -1,5 +1,5 @@
+#include <cstring>
 #include <jni.h>
-#include <sys/types.h>
 #include <pthread.h>
 #include "include/config.h"
 #include "hook_main.h"

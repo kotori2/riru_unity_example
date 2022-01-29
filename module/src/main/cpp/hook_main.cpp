@@ -2,20 +2,13 @@
 // Created by kotori0 on 2020/2/5.
 //
 
-#include <cstdio>
 #include <cstring>
-#include <cstdlib>
 #include <unistd.h>
-#include <cerrno>
 #include <sys/mman.h>
 #include <dlfcn.h>
 #include <dobby.h>
 #include <string>
-#include <ios>
-#include <sstream>
 #include "hook_main.h"
-#include <iomanip>
-#include <sys/system_properties.h>
 
 #include IL2CPPCLASS
 

@@ -6,8 +6,6 @@
 #define RIRU_MODULETEMPLATE_MASTER_HOOK_MAIN_H
 #include <jni.h>
 #include <android/log.h>
-#include <link.h>
-#include <vector>
 
 static int enable_hack;
 static const char* game_name = "com.company.game"; // TODO:EDIT THIS
